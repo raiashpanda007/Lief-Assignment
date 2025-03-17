@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "tsbuild": "esbuild src/index.ts --outdir=build --format=esm",
-    "dev": "node dist/index.js",
+    "dev": "node build/index.js",
     "start": "pnpm tsbuild && pnpm dev"
   },
   "devDependencies": {
