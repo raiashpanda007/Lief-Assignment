@@ -1,5 +1,4 @@
 import express from 'express'
-import { ApolloServer } from '@apollo/server'
 import { expressMiddleware } from '@apollo/server/express4'
 import { StartGraphQLServer } from './graphql'
 async function StartServer() {
@@ -14,8 +13,8 @@ async function StartServer() {
 
     app.use('/graphql', expressMiddleware(graphqlServer))
     
-    app.listen(3000, () => {
-        console.log('Server is running on http://localhost:3000')
+    app.listen(8000, () => {
+        console.log('Server is running on http://localhost:8000')
     }
     )
 }

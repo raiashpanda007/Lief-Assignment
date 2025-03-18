@@ -1,4 +1,4 @@
-import JoinButton from "@repo/ui/Landing/JoinButton";
+import JoinButton from "../Components/Landing/JoinButton";
 
 export default function LandingPage() {
   return (

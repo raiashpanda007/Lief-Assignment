@@ -1,3 +1,4 @@
-export const queries = `#graphql
-    
+
+export const queries = `
+    hello: String
 `
