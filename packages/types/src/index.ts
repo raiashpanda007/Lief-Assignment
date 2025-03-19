@@ -7,7 +7,15 @@ export interface CREATE_USER {
 
 export interface CLOCK_IN_USER {
     userId:string
-    timestamp:Date
+    timestamp:string
     latitude:string
     longitude:string
+}
+
+export interface CLOCK_OUT_USER {
+    userId:string
+    message:string
+    timestamp:string
+    
+
 }

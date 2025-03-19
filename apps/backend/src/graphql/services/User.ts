@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import type { CLOCK_IN_USER, CREATE_USER } from "@repo/types";
+import type { CLOCK_IN_USER, CLOCK_OUT_USER, CREATE_USER } from "@repo/types";
 import { prisma } from "@repo/db";
 
 class UserService {
@@ -70,7 +70,7 @@ class UserService {
                     const clockOut = await tx.clockOutRecord.create({
                         data: {
                             userId: payload.userId,
-                            timestamp: new Date(), // Clock out at current time
+                            timestamp: new Date(payload.timestamp), // Clock out at current time
                             latitude: lastClockIn.latitude, // Same location for now
                             longitude: lastClockIn.longitude,
                             clockInId: lastClockIn.id, // Link to clock-in
@@ -97,6 +97,45 @@ class UserService {
         } catch (error) {
             console.error("Error clocking in user:", error);
             throw new Error("Failed to Clock In User");
+        }
+    }
+    public static async  clockOutUser  (payload:CLOCK_OUT_USER) {
+        try {
+            return await prisma.$transaction(async (tx) => {
+                const checkClockIn = await tx.clockInRecord.findFirst({
+                    where: {
+                        userId: payload.userId,
+                        clockOutId: null
+                    }
+                })
+                if(checkClockIn){
+                    const clockOut = await tx.clockOutRecord.create({
+                        data: {
+                            userId: payload.userId,
+                            timestamp: new Date(payload.timestamp),
+                            message: payload.message,
+                            latitude: checkClockIn.latitude,
+                            longitude: checkClockIn.longitude,
+                            clockInId: checkClockIn.id
+                        }
+                    })
+                    await tx.clockInRecord.update({
+                        where: {
+                            id: checkClockIn.id
+                        },
+                        data: {
+                            clockOutId: clockOut.id
+                        }
+                    })
+                    return clockOut
+                }
+                
+                
+            })
+        } catch (error) {
+            console.error("Error clocking out user:", error);
+            throw new Error("Failed to Clock Out User");
+            
         }
     }
 }

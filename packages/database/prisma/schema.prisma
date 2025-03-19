@@ -48,6 +48,7 @@ model ClockOutRecord {
   userId     String
   user       Worker   @relation(fields: [userId], references: [userId], onDelete: Cascade)
   timestamp  DateTime @default(now())
+  message    String?
   latitude   Float
   longitude  Float
   clockIn    ClockInRecord @relation(fields: [clockInId], references: [id])

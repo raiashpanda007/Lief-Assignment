@@ -12,4 +12,14 @@ export const typeDefs = `
         latitude: Float!
         longitude: Float!
 
-    }`
+    }
+    type ClockOutRecord {
+        id: ID!
+        userId: String!
+        timestamp: String!
+        latitude: Float!
+        longitude: Float!
+        message: String
+        clockInId: String!
+    }   
+`

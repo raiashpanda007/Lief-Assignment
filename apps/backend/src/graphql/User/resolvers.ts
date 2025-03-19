@@ -1,4 +1,4 @@
-import { CREATE_USER ,CLOCK_IN_USER} from "@repo/types";
+import { CREATE_USER ,CLOCK_IN_USER, CLOCK_OUT_USER} from "@repo/types";
 import UserService from "../services/User";
 
 const queries = {
@@ -13,7 +13,11 @@ const mutations = {
     },
     clockInUser: async (_:any,payload:CLOCK_IN_USER)=>{
         return await UserService.clockInUser(payload)
+    },
+    clockOutUser: async (_:any,payload:CLOCK_OUT_USER)=>{
+        return await UserService.clockOutUser(payload)
     }
+
 };
 
 export const resolvers = {
