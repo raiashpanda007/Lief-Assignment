@@ -33,20 +33,25 @@ model Manager {
 }
 
 model ClockInRecord {
-  id        String   @id @default(uuid())
-  userId    String
-  user      Worker   @relation(fields: [userId], references: [userId], onDelete: Cascade)
-  timestamp DateTime @default(now())
-  latitude  Float
-  longitude Float
+  id         String   @id @default(uuid())
+  userId     String
+  user       Worker   @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  timestamp  DateTime @default(now())
+  latitude   Float
+  longitude  Float
+  clockOut   ClockOutRecord?
+  clockOutId String? // Stores the ID of the corresponding clock-out record
 }
+
 model ClockOutRecord {
-  id        String   @id @default(uuid())
-  userId    String
-  user      Worker   @relation(fields: [userId], references: [userId], onDelete: Cascade)
-  timestamp DateTime @default(now())
-  latitude  Float
-  longitude Float
+  id         String   @id @default(uuid())
+  userId     String
+  user       Worker   @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  timestamp  DateTime @default(now())
+  latitude   Float
+  longitude  Float
+  clockIn    ClockInRecord @relation(fields: [clockInId], references: [id])
+  clockInId  String @unique // Stores the ID of the corresponding clock-in record
 }
 
 enum Role {
