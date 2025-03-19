@@ -66,20 +66,35 @@ class UserService {
     }
     public static async clockInUser(payload:CLOCK_IN_USER){
         try{
-            const ClockInUser = await prisma.clockInRecord.create({
-                data:{
-                    userId:payload.userId,
-                    timestamp: new Date(payload.timestamp),
-                    latitude:parseFloat(payload.latitude),
-                    longitude:parseFloat(payload.longitude)
+            const ClockInUser = await prisma.$transaction(async (tx) => {
+                const ClockOutUser = await tx.clockOutRecord.findFirst({
+                    where: {
+                        userId: payload.userId,
+                    },
+                });
+                if (ClockOutUser) {
+                    await tx.clockOutRecord.delete({
+                        where: {
+                            id: ClockOutUser.id,
+                        },
+                    });
                 }
-            })
+                return tx.clockInRecord.create({
+                    data: {
+                        userId: payload.userId,
+                        timestamp: new Date(payload.timestamp),
+                        latitude: parseFloat(payload.latitude),
+                        longitude: parseFloat(payload.longitude),
+                    },
+                });
+            });
             return ClockInUser
         }catch(error){
             console.error("Error clocking in user:", error);
             throw Error("Failed to Clock In User")
         }
     }
+    
 }
 
 export default UserService;
