@@ -12,7 +12,7 @@ model User {
   name      String
   email     String   @unique
   password  String
-  role      Role?    // Initially NULL, user can update later
+  role      Role?    
   worker    Worker?  
   manager   Manager? 
   createdAt DateTime @default(now())
@@ -22,8 +22,8 @@ model User {
 model Worker {
   userId    String  @id
   user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  department String
   clockIns  ClockInRecord[]
+  clockOuts ClockOutRecord[]
 }
 
 model Manager {
@@ -33,6 +33,14 @@ model Manager {
 }
 
 model ClockInRecord {
+  id        String   @id @default(uuid())
+  userId    String
+  user      Worker   @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  timestamp DateTime @default(now())
+  latitude  Float
+  longitude Float
+}
+model ClockOutRecord {
   id        String   @id @default(uuid())
   userId    String
   user      Worker   @relation(fields: [userId], references: [userId], onDelete: Cascade)

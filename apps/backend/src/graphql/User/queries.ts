@@ -1,4 +1,4 @@
 
 export const queries = `
-    hello: String
+    getClockInUsers: [ClockInRecord]
 `

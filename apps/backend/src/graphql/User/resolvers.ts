@@ -1,14 +1,19 @@
-import { CREATE_USER } from "@repo/types";
+import { CREATE_USER ,CLOCK_IN_USER} from "@repo/types";
 import UserService from "../services/User";
 
 const queries = {
-    hello: () => "Hello World",
+    getClockInUsers: async () => {
+        return await UserService.getClockInUsers();
+    },
 };
 
 const mutations = {
     createUser: async (_: any, payload: CREATE_USER) => {
         return await UserService.createUser(payload);
     },
+    clockInUser: async (_:any,payload:CLOCK_IN_USER)=>{
+        return await UserService.clockInUser(payload)
+    }
 };
 
 export const resolvers = {

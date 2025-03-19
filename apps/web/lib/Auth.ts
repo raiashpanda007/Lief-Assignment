@@ -1,8 +1,18 @@
-import { NextAuthOptions } from "next-auth";
+import { NextAuthOptions, User } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { cookies } from "next/headers";
 
 const GRAPHQL_API_URL = process.env.NEXT_PUBLIC_GRAPHQL_API_URL; // GraphQL API URL
+
+declare module "next-auth" {
+  interface User {
+    role?: string | null;
+  }
+
+  interface Session {
+    user?: User;
+  }
+}
 
 const NEXT_AUTH_CONFIG: NextAuthOptions = {
   providers: [
@@ -51,8 +61,11 @@ const NEXT_AUTH_CONFIG: NextAuthOptions = {
       return token;
     },
 
-    async session({ session, token }:any) {
-      session.user.role = token.role || null;
+    async session({ session, token }) {
+      if(!session.user) return session
+      if (session.user) {
+        session.user.role = typeof token.role === 'string' ? token.role : null;
+      }
       return session;
     },
   },

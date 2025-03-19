@@ -8,7 +8,7 @@ const JoinButton = ({ type, label, className }: {
   className?: string;
 }) => {
   const handleJoin = () => {
-    const role = label === "Join as Manager" ? "manager" : "worker";
+    const role = label === "Join as Manager" ? "MANAGER" : "WORKER";
     
     // Store role in cookies
     document.cookie = `userRole=${role}; path=/; max-age=3600`;
