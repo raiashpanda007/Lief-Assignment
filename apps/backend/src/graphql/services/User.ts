@@ -7,79 +7,85 @@ class UserService {
         try {
             const hashedPassword = await bcrypt.hash(payload.password, 10);
             const userExists = await prisma.user.findUnique({
-                where: {
-                    email: payload.email,
-                },
+                where: { email: payload.email },
             });
+
             if (userExists) {
                 return userExists;
             }
+
             const user = await prisma.user.create({
                 data: {
                     email: payload.email,
                     password: hashedPassword,
                     role: payload.role,
                     name: payload.name,
-
                 },
             });
-            if(payload.role === "MANAGER"){
+
+            if (payload.role === "MANAGER") {
                 await prisma.manager.create({
                     data: {
-                        user: {
-                            connect: {
-                                id: user.id
-                            }
-                        },
-                        teamSize: 0 // or any default value
-                    }
-                })
-            }  else {
+                        user: { connect: { id: user.id } },
+                        teamSize: 0, // Default value
+                    },
+                });
+            } else {
                 await prisma.worker.create({
                     data: {
-                        user: {
-                            connect: {
-                                id: user.id
-                            }
-                        }
-                    }
-                })
+                        user: { connect: { id: user.id } },
+                    },
+                });
             }
-            return user;
 
+            return user;
         } catch (error) {
             console.error("Error creating user:", error);
             throw new Error("Failed to create user. Please try again.");
         }
     }
+
     public static async getClockInUsers() {
         try {
-            const ClockInUsers = await prisma.clockInRecord.findMany({});
-            
-
-            return ClockInUsers
-
-
+            return await prisma.clockInRecord.findMany({});
         } catch (error) {
-            throw Error("Failed to get ClockIn Users")
+            console.error("Error fetching clock-in users:", error);
+            throw new Error("Failed to get Clock-In Users");
         }
     }
-    public static async clockInUser(payload:CLOCK_IN_USER){
-        try{
-            const ClockInUser = await prisma.$transaction(async (tx) => {
-                const ClockOutUser = await tx.clockOutRecord.findFirst({
+
+    public static async clockInUser(payload: CLOCK_IN_USER) {
+        try {
+            return await prisma.$transaction(async (tx) => {
+                // 🔹 Find the last clock-in record that has NOT been clocked out
+                const lastClockIn = await tx.clockInRecord.findFirst({
                     where: {
                         userId: payload.userId,
+                        clockOutId: null, // No clock-out linked → still active session
                     },
                 });
-                if (ClockOutUser) {
-                    await tx.clockOutRecord.delete({
-                        where: {
-                            id: ClockOutUser.id,
+
+                // 🔹 If the user is still clocked in, automatically clock them out
+                if (lastClockIn) {
+                    const clockOut = await tx.clockOutRecord.create({
+                        data: {
+                            userId: payload.userId,
+                            timestamp: new Date(), // Clock out at current time
+                            latitude: lastClockIn.latitude, // Same location for now
+                            longitude: lastClockIn.longitude,
+                            clockInId: lastClockIn.id, // Link to clock-in
                         },
                     });
+
+                    // 🔹 Update the previous clock-in record with clockOutId
+                    await tx.clockInRecord.update({
+                        where: { id: lastClockIn.id },
+                        data: { clockOutId: clockOut.id },
+                    });
                 }
-                return tx.clockInRecord.create({
+
+                // 🔹 Now, proceed with the new clock-in
+                return await tx.clockInRecord.create({
                     data: {
                         userId: payload.userId,
                         timestamp: new Date(payload.timestamp),
@@ -88,13 +94,11 @@ class UserService {
                     },
                 });
             });
-            return ClockInUser
-        }catch(error){
+        } catch (error) {
             console.error("Error clocking in user:", error);
-            throw Error("Failed to Clock In User")
+            throw new Error("Failed to Clock In User");
         }
     }
-    
 }
 
 export default UserService;
