@@ -1,4 +1,4 @@
 
 export const queries = `
-    getClockInUsers: [ClockInRecord]
+    getClockInUsers: [ClockInRecord!]!
 `

@@ -47,12 +47,29 @@ class UserService {
 
     public static async getClockInUsers() {
         try {
-            return await prisma.clockInRecord.findMany({});
+            return await prisma.clockInRecord.findMany({
+                include: {
+                    user: { // Worker
+                        include: {
+                            user: {  // Fetch the related User model
+                                select: {
+                                    id: true,
+                                    email: true,
+                                    role: true,
+                                    name: true,
+                                }
+                            }
+                        }
+                    }
+                }
+            });
         } catch (error) {
             console.error("Error fetching clock-in users:", error);
             throw new Error("Failed to get Clock-In Users");
         }
     }
+    
+    
 
     public static async clockInUser(payload: CLOCK_IN_USER) {
         try {
