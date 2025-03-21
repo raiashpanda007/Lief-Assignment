@@ -21,7 +21,10 @@ function LocationPicker({ onLocationSelect }: MyMapProps) {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
-          const userPosition: [number, number] = [pos.coords.latitude, pos.coords.longitude];
+          const userPosition: [number, number] = [
+            pos.coords.latitude,
+            pos.coords.longitude,
+          ];
           setPosition(userPosition);
           onLocationSelect({ lat: userPosition[0], lng: userPosition[1] });
         },
@@ -79,9 +82,15 @@ export default function MyMap({ onLocationSelect }: MyMapProps) {
   }
 
   return (
-    <MapContainer center={mapCenter} zoom={13} style={{ height: "400px", width: "100%" }}>
-      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-      <LocationPicker onLocationSelect={onLocationSelect} />
-    </MapContainer>
+    <div className="w-full h-full">
+      <MapContainer
+        center={mapCenter}
+        zoom={13}
+        style={{ height: "800px", width: "100%" }}
+      >
+        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+        <LocationPicker onLocationSelect={onLocationSelect} />
+      </MapContainer>
+    </div>
   );
 }
