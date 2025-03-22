@@ -5,6 +5,7 @@ import DashboardStats from "../../../Components/DashboardStats";
 import StaffTable from "../../../Components/StaffTable";
 import { Button, InputNumber } from "antd";
 import { useRouter } from "next/navigation";
+import useLocationStore from "../../../store/locationStore";
 
 // GraphQL query to get clocked-in users
 const GET_CLOCK_IN_USERS = gql`
@@ -53,6 +54,7 @@ interface GetClockInUsersResponse {
 }
 
 const ManagerDashboard: React.FC = () => {
+  const location = useLocationStore((state) => state.location);
   const router = useRouter()
   // Fetch API Data
   const { data, loading, error } =
@@ -90,10 +92,17 @@ const ManagerDashboard: React.FC = () => {
   return (
     <div className="p-4 md:p-8 h-full">
       <h1 className="text-2xl font-bold text-white mb-6">Manager Dashboard</h1>
-      <div className="w-1/4 flex justify-between items-center py-2">
+      <div className="w-1/2 flex justify-between items-center py-2">
         <Button variant="dashed" className="bg-transparent text-white" onClick={() => router.push("/map")}>
           Change location
         </Button>
+        {
+          location && (
+            <span className="text-white ml-3">
+              Latitude {location.lat}, Longitude{location.lng}
+            </span>
+          )
+        }
         <div>
           <span className="text-white mr-2">Radius:</span>
           <InputNumber
@@ -104,6 +113,9 @@ const ManagerDashboard: React.FC = () => {
             
           />
         </div>
+        <Button variant="filled">
+          Confirm Location
+        </Button>
       </div>
 
       {/* Pass actual data when available */}
