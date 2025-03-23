@@ -4,7 +4,7 @@ import { queries } from './queries'
 import { mutations } from './mutations'
 
 
-export const User = {
+export const Manager = {
     queries,
     mutations,
     typeDefs,
