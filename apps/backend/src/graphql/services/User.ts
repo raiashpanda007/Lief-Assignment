@@ -27,7 +27,10 @@ class UserService {
                 await prisma.manager.create({
                     data: {
                         user: { connect: { id: user.id } },
-                        teamSize: 0, // Default value
+                        radius: 0, // Add appropriate value
+                        latitude: 0, // Add appropriate value
+                        longitude: 0, // Add appropriate value
+                       
                     },
                 });
             } else {
@@ -88,8 +91,8 @@ class UserService {
                         data: {
                             userId: payload.userId,
                             timestamp: new Date(payload.timestamp), // Clock out at current time
-                            latitude: lastClockIn.latitude, // Same location for now
-                            longitude: lastClockIn.longitude,
+                            latitude: lastClockIn.latitude ?? 0, // Same location for now, default to 0 if null
+                            longitude: lastClockIn.longitude ?? 0,
                             clockInId: lastClockIn.id, // Link to clock-in
                         },
                     });
@@ -131,8 +134,8 @@ class UserService {
                             userId: payload.userId,
                             timestamp: new Date(payload.timestamp),
                             message: payload.message,
-                            latitude: checkClockIn.latitude,
-                            longitude: checkClockIn.longitude,
+                            latitude: checkClockIn.latitude ?? 0,
+                            longitude: checkClockIn.longitude ?? 0,
                             clockInId: checkClockIn.id
                         }
                     })

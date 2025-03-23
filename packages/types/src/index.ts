@@ -19,3 +19,11 @@ export interface CLOCK_OUT_USER {
     
 
 }
+
+
+export interface UPDATE_MAP_LOCATION {
+    latitude:string
+    longitude:string
+    userId:string
+
+}

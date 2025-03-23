@@ -92,7 +92,7 @@ const ManagerDashboard: React.FC = () => {
   return (
     <div className="p-4 md:p-8 h-full">
       <h1 className="text-2xl font-bold text-white mb-6">Manager Dashboard</h1>
-      <div className="w-1/2 flex justify-between items-center py-2">
+      <form className="w-1/2 flex justify-between items-center py-2">
         <Button variant="dashed" className="bg-transparent text-white" onClick={() => router.push("/map")}>
           Change location
         </Button>
@@ -116,7 +116,7 @@ const ManagerDashboard: React.FC = () => {
         <Button variant="filled">
           Confirm Location
         </Button>
-      </div>
+      </form>
 
       {/* Pass actual data when available */}
       <DashboardStats
